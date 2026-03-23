@@ -1,6 +1,8 @@
-# Utility: Fibonacci
-def fib(n):
-    a, b = 0, 1
-    for _ in range(n):
-        a, b = b, a+b
-    return a
+# FastAPI Example
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello World"}
