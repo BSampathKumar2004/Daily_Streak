@@ -1,0 +1,29 @@
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: "30 18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Make changes
+        run: |
+          echo "Last updated: $(date)" >> log.txt
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "BSampathKumar2004"
+          git config --global user.email "bandarusampathkumar16@gmail.com"
+          git add .
+          git commit -m "Auto commit" || echo "No changes"
+          git push
