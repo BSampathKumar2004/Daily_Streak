@@ -1,8 +1,8 @@
-name: Auto Commit
+name: Smart Auto Commit
 
 on:
   schedule:
-    - cron: "30 18 * * *"
+    - cron: "0 */6 * * *"   # every 6 hours (4 times/day)
   workflow_dispatch:
 
 permissions:
@@ -16,14 +16,27 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Make changes
+      - name: Generate random commits
         run: |
-          echo "Last updated: $(date)" >> log.txt
+          messages=("fix bug" "update code" "improve logic" "refactor" "minor changes" "optimize" "cleanup")
+          
+          count=$(( (RANDOM % 4) + 2 ))  # 2 to 5 commits
 
-      - name: Commit changes
+          for i in $(seq 1 $count)
+          do
+            file="file_$((RANDOM % 5)).txt"
+            
+            echo "Update $RANDOM at $(date)" >> $file
+            
+            git add .
+            msg=${messages[$RANDOM % ${#messages[@]}]}
+            git commit -m "$msg" || echo "No changes"
+            
+            sleep $(( (RANDOM % 20) + 5 ))  # random delay 5–25 sec
+          done
+
+      - name: Push changes
         run: |
           git config --global user.name "BSampathKumar2004"
-          git config --global user.email "bandarusampathkumar16@gmail.com"
-          git add .
-          git commit -m "Auto commit" || echo "No changes"
+          git config --global user.email "bandarussampathkumar16@gmail.com"
           git push
