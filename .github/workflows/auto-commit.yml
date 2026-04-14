@@ -19,7 +19,7 @@ jobs:
       - name: Setup Git
         run: |
           git config --global user.name "BSampathKumar2004"
-          git config --global user.email "bandarussampathkumar16@gmail.com"
+          git config --global user.email "bandarusampathkumar16@gmail.com"
 
       - name: Generate real commits
         run: |
