@@ -16,30 +16,45 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # ✅ ADD THIS STEP HERE
       - name: Setup Git
         run: |
           git config --global user.name "BSampathKumar2004"
           git config --global user.email "bandarussampathkumar16@gmail.com"
 
-      - name: Generate random commits
+      - name: Generate real commits
         run: |
-          messages=("fix bug" "update code" "improve logic" "refactor" "minor changes" "optimize" "cleanup")
-          
-          count=$(( (RANDOM % 4) + 2 ))
-          for i in $(seq 1 $count)
-          do
-            file="file_$((RANDOM % 5)).txt"
-            
-            echo "Update $RANDOM at $(date)" >> $file
-            
+          categories=("fastapi" "algorithm" "database" "utils")
+          actions=("feat" "fix" "refactor" "improve")
+
+          count=4
+
+          for i in $(seq 1 $count); do
+            category=${categories[$RANDOM % ${#categories[@]}]}
+            action=${actions[$RANDOM % ${#actions[@]}]}
+            timestamp=$(date +%s%N)
+
+            if [ "$category" = "fastapi" ]; then
+              file="fastapi_$timestamp.py"
+              printf "from fastapi import FastAPI\napp = FastAPI()\n\n@app.get('/')\ndef root():\n    return {'msg': 'hello'}\n" > "$file"
+
+            elif [ "$category" = "algorithm" ]; then
+              file="algo_$timestamp.py"
+              printf "def fib(n):\n    a,b=0,1\n    for _ in range(n):\n        a,b=b,a+b\n    return a\n" > "$file"
+
+            elif [ "$category" = "database" ]; then
+              file="query_$timestamp.sql"
+              printf "SELECT COUNT(*) FROM users;\n" > "$file"
+
+            else
+              file="util_$timestamp.py"
+              printf "def reverse(s):\n    return s[::-1]\n" > "$file"
+            fi
+
             git add .
-            msg=${messages[$RANDOM % ${#messages[@]}]}
-            git commit -m "$msg" || echo "No changes"
-            
-            sleep $(( (RANDOM % 20) + 5 ))
+            git commit -m "$action($category): update $file" || echo "No changes"
+
+            sleep $(( (RANDOM % 10) + 5 ))
           done
 
       - name: Push changes
-        run: |
-          git push
+        run: git push
