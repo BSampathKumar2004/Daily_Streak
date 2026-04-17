@@ -21,12 +21,19 @@ jobs:
           git config --global user.name "BSampathKumar2004"
           git config --global user.email "bandarusampathkumar16@gmail.com"
 
-      - name: Generate real commits
+      - name: Generate smart commits
         run: |
           categories=("fastapi" "algorithm" "database" "utils")
           actions=("feat" "fix" "refactor" "improve")
 
-          count=4
+          # 🔥 20% chance to skip run (human behavior)
+          if [ $((RANDOM % 100)) -lt 20 ]; then
+            echo "Skipping this run (natural behavior)"
+            exit 0
+          fi
+
+          # 🔥 Random commits per run (2–5)
+          count=$(( (RANDOM % 4) + 2 ))
 
           for i in $(seq 1 $count); do
             category=${categories[$RANDOM % ${#categories[@]}]}
@@ -53,6 +60,7 @@ jobs:
             git add .
             git commit -m "$action($category): update $file" || echo "No changes"
 
+            # 🔥 random delay (5–15 sec)
             sleep $(( (RANDOM % 10) + 5 ))
           done
 
